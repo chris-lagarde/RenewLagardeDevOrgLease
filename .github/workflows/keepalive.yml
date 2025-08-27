@@ -1,14 +1,29 @@
-name: Keepalive
+name: Keep repo active (PR)
+
 on:
   schedule:
-    - cron: '23 5 * * 2'
+    - cron: "0 0 1,15 * *"
   workflow_dispatch:
 
 permissions:
   contents: write
+  pull-requests: write
 
 jobs:
   keepalive:
     runs-on: ubuntu-latest
     steps:
-      - uses: gautamkrishnar/keepalive-workflow@v1
+      - uses: actions/checkout@v4
+      - name: Update heartbeat file
+        run: |
+          mkdir -p .github
+          echo "$(date -u +'%Y-%m-%dT%H:%M:%SZ')" >> .github/heartbeat.log
+      - name: Create PR
+        uses: peter-evans/create-pull-request@v6
+        with:
+          commit-message: "chore: keepalive"
+          title: "chore: keepalive"
+          body: "Automated keepalive to prevent scheduled workflows disabling."
+          branch: "chore/keepalive"
+          delete-branch: true
+
