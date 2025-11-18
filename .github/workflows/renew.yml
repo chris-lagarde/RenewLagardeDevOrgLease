@@ -5,6 +5,11 @@ on:
   schedule:
     - cron:  '30 20 * * TUE'
   workflow_dispatch:
+
+permissions:
+  contents: read
+
+
 jobs:
   dev-org-renew:
     runs-on: ubuntu-latest
